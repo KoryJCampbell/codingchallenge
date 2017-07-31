@@ -1,0 +1,11 @@
+{
+  "user_id": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    }
+  },
+  "session_id": "kl-Bv-OWEECIYDlvSl3m3pW2zrqdV_cN"
+}
