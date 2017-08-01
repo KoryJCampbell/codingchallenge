@@ -3,17 +3,32 @@ var bodyParser = require('body-parser');
 var fs = require('fs');
 var parseurl = require('parseurl')
 var session = require('express-session');
-var weather = require("Openweather-Node")
+var weather = require("Openweather-Node");
+var ip = require('ip');
 var app = express();
 
-app.use(express.static('client'));
-app.use(session({
-	secret: 'yadayadayadayadayada'
-}))
+// collect request info
+var requests = [];
+var requestTrimThreshold = 1000000;
+var requestTrimSize = 100000;
+app.use(function (req, res, next) {
+	requests.push(Date.now());
 
+	// now keep requests array from growing forever
+	if (requests.length > requestTrimThreshold) {
+		requests = requests.slice(0, requests.length - requestTrimSize);
+	}
+	next();
+});
+
+app.use(express.static('client'));
+app.use(session({secret: 'yadayadayadayadayada'}))
+
+//open-weather api variables
 weather.setAPPID("4a1298ed40a24c281f313628a32881f7");
 weather.setCulture("us");
 weather.setForecastType("daily");
+
 
 var data = fs.readFileSync('test.json');
 var stats = JSON.parse(data);
@@ -23,15 +38,25 @@ app.post('/activity', postActivity);
 
 function postActivity(req, res) {
 	var sid = req.sessionID;
-	var sess = req.session;
+	var user = ip.address();
+	var date = Date();
+
 	var activity = {
-		user_id: sess,
-		session_id: sid
+		user_id: user,
+		session_id: sid,
+		total_sessions: requests.length,
+		total_sessions_per_day: date
+		// total_users:
+		// avg_session_per_user:
 	};
 
-var data = JSON.stringify(activity, null, 2);
+	var data = JSON.stringify(activity, null, 2);
 
-fs.writeFile('test.json', data, finished, {'flags': 'a'});
+	
+	// Write File Data to test.json
+	fs.writeFile('test.json', data, finished, {
+		'flags': 'a'
+	});
 
 	function finished(err) {
 		reply = {
@@ -39,7 +64,7 @@ fs.writeFile('test.json', data, finished, {'flags': 'a'});
 		};
 		res.send(reply);
 	}
-res.sendStatus(200);
+	res.sendStatus(200);
 }
 
 //Get Request for Stats
@@ -61,6 +86,6 @@ function getData(req, res) {
 	});
 }
 
+// Listen on port 3000
 app.listen(3000);
 console.log('listening on port 3000');
-

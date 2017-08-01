@@ -1,11 +1,6 @@
 {
-  "user_id": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    }
-  },
-  "session_id": "kl-Bv-OWEECIYDlvSl3m3pW2zrqdV_cN"
+  "user_id": "192.168.1.173",
+  "session_id": "qAyuFLAfKjHVufynzXnw54N0LzMFYAeq",
+  "total_sessions": 2,
+  "total_sessions_per_day": "Mon Jul 31 2017 22:47:24 GMT-0400 (EDT)"
 }
